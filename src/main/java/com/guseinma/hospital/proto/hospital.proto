@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package com.guseinma.hospital;
+
+option java_multiple_files = true;
+option java_package = "com.guseinma.hospital.proto"; // package for generated Java classes from .proto
+
+service HospitalService {
+  rpc CreateHospital (Hospital) returns (OperationResponse) {}
+  rpc UpdateHospital (Hospital) returns (OperationResponse) {}
+  rpc DeleteHospital (HospitalId) returns (OperationResponse) {}
+
+  rpc CreatePatient (Patient) returns (OperationResponse) {}
+  rpc UpdatePatient (Patient) returns (OperationResponse) {}
+  rpc DeletePatient (PatientId) returns (OperationResponse) {}
+
+  rpc RegisterPatient (RegisterRequest) returns (OperationResponse) {}
+  rpc ReadPatientsOfHospital (HospitalId) returns (PatientList) {}
+  rpc ReadHospitalsOfPatient (PatientId) returns (HospitalList) {}
+}
+
+message Hospital {
+  int64 id = 1;
+  string name = 2;
+  string address = 3;
+  string phoneNumber = 4;
+}
+
+message Patient {
+  int64 id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string gender = 4;
+  string birth_date = 5;
+  string phone_number = 6;
+}
+
+message HospitalId {
+  int64 id = 1;
+}
+
+message PatientId {
+  int64 id = 1;
+}
+
+message RegisterRequest {
+  int64 patient_id = 1;
+  int64 hospital_id = 2;
+}
+
+message OperationResponse {
+  bool success = 1;
+}
+
+message PatientList {
+  repeated Patient patients = 1;
+}
+
+message HospitalList {
+  repeated Hospital hospitals = 1;
+}
