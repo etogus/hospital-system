@@ -138,6 +138,7 @@ public class HospitalServiceImpl extends HospitalServiceGrpc.HospitalServiceImpl
     }
 
     @Override
+    @Transactional
     public void readHospitalsOfPatient(PatientId request, StreamObserver<HospitalList> streamObserver) {
         com.guseinma.hospital.model.Patient patient = patientRepository.findById(request.getId())
                 .orElseThrow(() -> new RuntimeException("Patient does not exist!"));
