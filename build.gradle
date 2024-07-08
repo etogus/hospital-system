@@ -73,6 +73,11 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+task runGrpcClient(type: JavaExec) {
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'com.guseinma.hospital.client.GrpcClient'
+}
+
 tasks.withType(JavaCompile) {
 	it.dependsOn 'generateProto'
 }

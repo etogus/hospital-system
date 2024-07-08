@@ -4,6 +4,7 @@ package com.guseinma.hospital.service;
 import com.guseinma.hospital.proto.*;
 import com.guseinma.hospital.repository.HospitalRepository;
 import com.guseinma.hospital.repository.PatientRepository;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import jakarta.transaction.Transactional;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -118,16 +119,22 @@ public class HospitalServiceImpl extends HospitalServiceGrpc.HospitalServiceImpl
     }
 
     @Override
+    @Transactional
     public void readPatientsOfHospital(HospitalId request, StreamObserver<PatientList> streamObserver) {
-        com.guseinma.hospital.model.Hospital hospital = hospitalRepository.findById(request.getId())
-                .orElseThrow(() -> new RuntimeException("Hospital does not exist!"));
-        List<Patient> patients = hospital.getPatients().stream()
-                .map(this::patientToProto).toList();
-        PatientList patientList = PatientList.newBuilder()
-                .addAllPatients(patients)
-                .build();
-        streamObserver.onNext(patientList);
-        streamObserver.onCompleted();
+        try {
+            com.guseinma.hospital.model.Hospital hospital = hospitalRepository.findById(request.getId())
+                    .orElseThrow(() -> new RuntimeException("Hospital does not exist!"));
+            List<Patient> patients = hospital.getPatients().stream()
+                    .map(this::patientToProto).toList();
+            PatientList patientList = PatientList.newBuilder()
+                    .addAllPatients(patients)
+                    .build();
+            streamObserver.onNext(patientList);
+            streamObserver.onCompleted();
+        } catch (Exception e) {
+            e.printStackTrace();
+            streamObserver.onError(Status.INTERNAL.withDescription("Error processing request: " + e.getMessage()).asException());
+        }
     }
 
     @Override
