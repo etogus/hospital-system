@@ -87,7 +87,7 @@ public class GrpcClient {
         Patient patient2 = Patient.newBuilder()
                 .setFirstName("Jane")
                 .setLastName("Smith")
-                .setGender("female")
+                .setGender("Female")
                 .setBirthDate("2001-05-06")
                 .setPhoneNumber("135-246-0000")
                 .build();
@@ -121,6 +121,35 @@ public class GrpcClient {
         // Read Patients of Hospital 2
         patientList = stub.readPatientsOfHospital(hospitalId2);
         System.out.println("Patients in Hospital 2: " + patientList);
+
+        // Update Patient 1
+        patient1 = Patient.newBuilder()
+                .setId(1L)
+                .setFirstName("Jessica")
+                .setLastName("Doe")
+                .setGender("Female")
+                .setBirthDate("1990-01-01")
+                .setPhoneNumber("444-555-6666")
+                .build();
+        response = stub.updatePatient(patient1);
+        System.out.println("Update Patient 1 Response: " + response.getSuccess());
+
+        // Read Patients of Hospital 2 again
+        patientList = stub.readPatientsOfHospital(hospitalId2);
+        System.out.println("Patients in Hospital 2: " + patientList);
+
+        // Update Hospital 2
+        hospital2 = Hospital.newBuilder()
+                .setId(2L)
+                .setName("New Shiny Name")
+                .setAddress("123 Grpc St")
+                .setPhoneNumber("999-888-7777")
+                .build();
+        response = stub.updateHospital(hospital2);
+        System.out.println("Update Hospital 2 Response: " + response.getSuccess());
+
+        hospitalList = stub.readHospitalsOfPatient(patientId1);
+        System.out.println("List of Hospitals of Patient 1: " + hospitalList);
 
         channel.shutdown();
     }
