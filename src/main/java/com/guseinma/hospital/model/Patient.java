@@ -3,7 +3,9 @@ package com.guseinma.hospital.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,7 +24,7 @@ public class Patient {
             name = "patient_hospital",
             joinColumns = @JoinColumn(name = "patient_id"),
             inverseJoinColumns = @JoinColumn(name = "hospital_id"))
-    private Set<Hospital> hospitals = new HashSet<>();
+    private List<Hospital> hospitals = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -72,11 +74,11 @@ public class Patient {
         this.phoneNumber = phoneNumber;
     }
 
-    public Set<Hospital> getHospitals() {
+    public List<Hospital> getHospitals() {
         return hospitals;
     }
 
-    public void setHospitals(Set<Hospital> hospitals) {
+    public void setHospitals(List<Hospital> hospitals) {
         this.hospitals = hospitals;
     }
 }

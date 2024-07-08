@@ -2,7 +2,9 @@ package com.guseinma.hospital.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,7 +17,7 @@ public class Hospital {
     private String phoneNumber;
 
     @ManyToMany(mappedBy = "hospitals")
-    private Set<Patient> patients = new HashSet<>();
+    private List<Patient> patients = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -49,11 +51,11 @@ public class Hospital {
         this.phoneNumber = phoneNumber;
     }
 
-    public Set<Patient> getPatients() {
+    public List<Patient> getPatients() {
         return patients;
     }
 
-    public void setPatients(Set<Patient> patients) {
+    public void setPatients(List<Patient> patients) {
         this.patients = patients;
     }
 }
