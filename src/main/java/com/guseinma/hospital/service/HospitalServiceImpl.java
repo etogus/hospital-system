@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @GrpcService
 public class HospitalServiceImpl extends HospitalServiceGrpc.HospitalServiceImplBase {
@@ -50,13 +51,36 @@ public class HospitalServiceImpl extends HospitalServiceGrpc.HospitalServiceImpl
     }
 
     @Override
+    @Transactional
     public void deleteHospital(HospitalId request, StreamObserver<OperationResponse> streamObserver) {
-        hospitalRepository.deleteById(request.getId());
-        OperationResponse operationResponse = OperationResponse.newBuilder()
-                .setSuccess(true)
-                .build();
-        streamObserver.onNext(operationResponse);
-        streamObserver.onCompleted();
+        try {
+            Optional<com.guseinma.hospital.model.Hospital> optionalHospital = hospitalRepository
+                    .findById(request.getId());
+            if(optionalHospital.isPresent()) {
+                com.guseinma.hospital.model.Hospital hospital = optionalHospital.get();
+                // Remove the hospital from all patients who registered in it
+                for(com.guseinma.hospital.model.Patient patient: hospital.getPatients()) {
+                    patient.getHospitals().remove(hospital);
+                    patientRepository.save(patient);
+                }
+
+                hospital.getPatients().clear();
+                hospitalRepository.save(hospital);
+                hospitalRepository.delete(hospital);
+
+                OperationResponse operationResponse = OperationResponse.newBuilder()
+                        .setSuccess(true)
+                        .build();
+                streamObserver.onNext(operationResponse);
+                streamObserver.onCompleted();
+            } else {
+                throw new RuntimeException("Hospital does not exist!");
+            }
+        } catch (Exception e) {
+            streamObserver.onError(Status.INTERNAL
+                    .withDescription("Error deleting hospital: " + e.getMessage())
+                    .asRuntimeException());
+        }
     }
 
     @Override
@@ -132,8 +156,9 @@ public class HospitalServiceImpl extends HospitalServiceGrpc.HospitalServiceImpl
             streamObserver.onNext(patientList);
             streamObserver.onCompleted();
         } catch (Exception e) {
-            e.printStackTrace();
-            streamObserver.onError(Status.INTERNAL.withDescription("Error processing request: " + e.getMessage()).asException());
+            streamObserver.onError(Status.INTERNAL
+                    .withDescription("Error processing readPatientsOfHospital: " + e.getMessage())
+                    .asRuntimeException());
         }
     }
 
