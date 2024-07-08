@@ -129,17 +129,23 @@ public class HospitalServiceImpl extends HospitalServiceGrpc.HospitalServiceImpl
     @Override
     @Transactional
     public void registerPatient(RegisterRequest request, StreamObserver<OperationResponse> streamObserver) {
-        com.guseinma.hospital.model.Patient patient = patientRepository.findById(request.getPatientId())
-                .orElseThrow(() -> new RuntimeException("Patient does not exist!"));
-        com.guseinma.hospital.model.Hospital hospital = hospitalRepository.findById(request.getHospitalId())
-                .orElseThrow(() -> new RuntimeException("Hospital does not exist!"));
-        patient.getHospitals().add(hospital);
-        patientRepository.save(patient);
-        OperationResponse operationResponse = OperationResponse.newBuilder()
-                .setSuccess(true)
-                .build();
-        streamObserver.onNext(operationResponse);
-        streamObserver.onCompleted();
+        try {
+            com.guseinma.hospital.model.Patient patient = patientRepository.findById(request.getPatientId())
+                    .orElseThrow(() -> new RuntimeException("Patient does not exist!"));
+            com.guseinma.hospital.model.Hospital hospital = hospitalRepository.findById(request.getHospitalId())
+                    .orElseThrow(() -> new RuntimeException("Hospital does not exist!"));
+            patient.getHospitals().add(hospital);
+            patientRepository.save(patient);
+            OperationResponse operationResponse = OperationResponse.newBuilder()
+                    .setSuccess(true)
+                    .build();
+            streamObserver.onNext(operationResponse);
+            streamObserver.onCompleted();
+        } catch (Exception e) {
+            streamObserver.onError(Status.INTERNAL
+                    .withDescription("Error processing registerPatient: " + e.getMessage())
+                    .asRuntimeException());
+        }
     }
 
     @Override

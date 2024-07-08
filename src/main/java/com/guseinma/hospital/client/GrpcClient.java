@@ -40,7 +40,7 @@ public class GrpcClient {
         PatientList patientList = stub.readPatientsOfHospital(hospitalId1);
         System.out.println("Patients in Hospital 1 before registration: " + patientList.getPatientsCount());
 
-        // Register Patient 1 to Hospital
+        // Register Patient 1 to Hospital 1
         RegisterRequest registerRequest = RegisterRequest.newBuilder()
                 .setPatientId(1L)
                 .setHospitalId(1L)
@@ -63,11 +63,11 @@ public class GrpcClient {
         System.out.println("Create Hospital 2 Response: " + response.getSuccess());
 
         // Register Patient 1 to Hospital 2
-        RegisterRequest registerRequest2 = RegisterRequest.newBuilder()
+        registerRequest = RegisterRequest.newBuilder()
                 .setPatientId(1L)
                 .setHospitalId(2L)
                 .build();
-        response = stub.registerPatient(registerRequest2);
+        response = stub.registerPatient(registerRequest);
         System.out.println("Register Patient 1 in Hospital 2 Response: " + response.getSuccess());
 
         // Read Hospitals of Patient 1
@@ -82,6 +82,45 @@ public class GrpcClient {
         // Read Hospitals of Patient 1
         hospitalList = stub.readHospitalsOfPatient(patientId1);
         System.out.println("List of Hospitals of Patient 1: " + hospitalList);
+
+        // Create Patient 2
+        Patient patient2 = Patient.newBuilder()
+                .setFirstName("Jane")
+                .setLastName("Smith")
+                .setGender("female")
+                .setBirthDate("2001-05-06")
+                .setPhoneNumber("135-246-0000")
+                .build();
+        response = stub.createPatient(patient2);
+        System.out.println("Create Patient 2 Response: " + response.getSuccess());
+
+        // Read Patients of Hospital 2 (before registration)
+        HospitalId hospitalId2 = HospitalId.newBuilder().setId(2L).build();
+        patientList = stub.readPatientsOfHospital(hospitalId2);
+        System.out.println("Patients in Hospital 2 before registration: " + patientList.getPatientsCount());
+
+        // Register Patient 2 to Hospital 2
+        registerRequest = RegisterRequest.newBuilder()
+                .setPatientId(2L)
+                .setHospitalId(2L)
+                .build();
+        response = stub.registerPatient(registerRequest);
+        System.out.println("Register Patient 2 in Hospital 2 Response: " + response.getSuccess());
+
+        // Read Patients of Hospital 2 (after registration)
+        patientList = stub.readPatientsOfHospital(hospitalId2);
+        System.out.println("Patients in Hospital 2 after registration: " + patientList.getPatientsCount());
+
+        // Delete Patient 2
+        PatientId patientId2 = PatientId.newBuilder()
+                .setId(2L)
+                .build();
+        response = stub.deletePatient(patientId2);
+        System.out.println("Patient 2 has been deleted: " + response.getSuccess());
+
+        // Read Patients of Hospital 2
+        patientList = stub.readPatientsOfHospital(hospitalId2);
+        System.out.println("Patients in Hospital 2: " + patientList);
 
         channel.shutdown();
     }
