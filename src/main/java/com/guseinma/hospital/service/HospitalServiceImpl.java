@@ -23,31 +23,43 @@ public class HospitalServiceImpl extends HospitalServiceGrpc.HospitalServiceImpl
 
     @Override
     public void createHospital(Hospital request, StreamObserver<OperationResponse> streamObserver) {
-        com.guseinma.hospital.model.Hospital hospital = new com.guseinma.hospital.model.Hospital();
-        hospital.setName(request.getName());
-        hospital.setAddress(request.getAddress());
-        hospital.setPhoneNumber(request.getPhoneNumber());
-        hospitalRepository.save(hospital);
-        OperationResponse operationResponse = OperationResponse.newBuilder()
-                .setSuccess(true)
-                .build();
-        streamObserver.onNext(operationResponse);
-        streamObserver.onCompleted();
+        try {
+            com.guseinma.hospital.model.Hospital hospital = new com.guseinma.hospital.model.Hospital();
+            hospital.setName(request.getName());
+            hospital.setAddress(request.getAddress());
+            hospital.setPhoneNumber(request.getPhoneNumber());
+            hospitalRepository.save(hospital);
+            OperationResponse operationResponse = OperationResponse.newBuilder()
+                    .setSuccess(true)
+                    .build();
+            streamObserver.onNext(operationResponse);
+            streamObserver.onCompleted();
+        } catch (Exception e) {
+            streamObserver.onError(Status.INTERNAL
+                    .withDescription("Error creating hospital: " + e.getMessage())
+                    .asRuntimeException());
+        }
     }
 
     @Override
     public void updateHospital(Hospital request, StreamObserver<OperationResponse> streamObserver) {
-        com.guseinma.hospital.model.Hospital hospital = hospitalRepository.findById(request.getId())
-                .orElseThrow(() -> new RuntimeException("Hospital does not exist!"));
-        hospital.setName(request.getName());
-        hospital.setAddress(request.getAddress());
-        hospital.setPhoneNumber(request.getPhoneNumber());
-        hospitalRepository.save(hospital);
-        OperationResponse operationResponse = OperationResponse.newBuilder()
-                .setSuccess(true)
-                .build();
-        streamObserver.onNext(operationResponse);
-        streamObserver.onCompleted();
+        try {
+            com.guseinma.hospital.model.Hospital hospital = hospitalRepository.findById(request.getId())
+                    .orElseThrow(() -> new RuntimeException("Hospital does not exist!"));
+            hospital.setName(request.getName());
+            hospital.setAddress(request.getAddress());
+            hospital.setPhoneNumber(request.getPhoneNumber());
+            hospitalRepository.save(hospital);
+            OperationResponse operationResponse = OperationResponse.newBuilder()
+                    .setSuccess(true)
+                    .build();
+            streamObserver.onNext(operationResponse);
+            streamObserver.onCompleted();
+        } catch (Exception e) {
+            streamObserver.onError(Status.INTERNAL
+                    .withDescription("Error updating hospital: " + e.getMessage())
+                    .asRuntimeException());
+        }
     }
 
     @Override
@@ -85,45 +97,63 @@ public class HospitalServiceImpl extends HospitalServiceGrpc.HospitalServiceImpl
 
     @Override
     public void createPatient(Patient request, StreamObserver<OperationResponse> streamObserver) {
-        com.guseinma.hospital.model.Patient patient = new com.guseinma.hospital.model.Patient();
-        patient.setFirstName(request.getFirstName());
-        patient.setLastName(request.getLastName());
-        patient.setGender(request.getGender());
-        patient.setBirthDate(LocalDate.parse(request.getBirthDate()));
-        patient.setPhoneNumber(request.getPhoneNumber());
-        patientRepository.save(patient);
-        OperationResponse operationResponse = OperationResponse.newBuilder()
-                .setSuccess(true)
-                .build();
-        streamObserver.onNext(operationResponse);
-        streamObserver.onCompleted();
+        try {
+            com.guseinma.hospital.model.Patient patient = new com.guseinma.hospital.model.Patient();
+            patient.setFirstName(request.getFirstName());
+            patient.setLastName(request.getLastName());
+            patient.setGender(request.getGender());
+            patient.setBirthDate(LocalDate.parse(request.getBirthDate()));
+            patient.setPhoneNumber(request.getPhoneNumber());
+            patientRepository.save(patient);
+            OperationResponse operationResponse = OperationResponse.newBuilder()
+                    .setSuccess(true)
+                    .build();
+            streamObserver.onNext(operationResponse);
+            streamObserver.onCompleted();
+        } catch (Exception e) {
+            streamObserver.onError(Status.INTERNAL
+                    .withDescription("Error creating patient: " + e.getMessage())
+                    .asRuntimeException());
+        }
     }
 
     @Override
     public void updatePatient(Patient request, StreamObserver<OperationResponse> streamObserver) {
-        com.guseinma.hospital.model.Patient patient = patientRepository.findById(request.getId())
-                .orElseThrow(() -> new RuntimeException("Patient does not exist!"));
-        patient.setFirstName(request.getFirstName());
-        patient.setLastName(request.getLastName());
-        patient.setGender(request.getGender());
-        patient.setBirthDate(LocalDate.parse(request.getBirthDate()));
-        patient.setPhoneNumber(request.getPhoneNumber());
-        patientRepository.save(patient);
-        OperationResponse operationResponse = OperationResponse.newBuilder()
-                .setSuccess(true)
-                .build();
-        streamObserver.onNext(operationResponse);
-        streamObserver.onCompleted();
+        try {
+            com.guseinma.hospital.model.Patient patient = patientRepository.findById(request.getId())
+                    .orElseThrow(() -> new RuntimeException("Patient does not exist!"));
+            patient.setFirstName(request.getFirstName());
+            patient.setLastName(request.getLastName());
+            patient.setGender(request.getGender());
+            patient.setBirthDate(LocalDate.parse(request.getBirthDate()));
+            patient.setPhoneNumber(request.getPhoneNumber());
+            patientRepository.save(patient);
+            OperationResponse operationResponse = OperationResponse.newBuilder()
+                    .setSuccess(true)
+                    .build();
+            streamObserver.onNext(operationResponse);
+            streamObserver.onCompleted();
+        } catch (Exception e) {
+            streamObserver.onError(Status.INTERNAL
+                    .withDescription("Error updating patient: " + e.getMessage())
+                    .asRuntimeException());
+        }
     }
 
     @Override
     public void deletePatient(PatientId request, StreamObserver<OperationResponse> streamObserver) {
-        patientRepository.deleteById(request.getId());
-        OperationResponse operationResponse = OperationResponse.newBuilder()
-                .setSuccess(true)
-                .build();
-        streamObserver.onNext(operationResponse);
-        streamObserver.onCompleted();
+        try {
+            patientRepository.deleteById(request.getId());
+            OperationResponse operationResponse = OperationResponse.newBuilder()
+                    .setSuccess(true)
+                    .build();
+            streamObserver.onNext(operationResponse);
+            streamObserver.onCompleted();
+        } catch (Exception e) {
+            streamObserver.onError(Status.INTERNAL
+                    .withDescription("Error deleting patient: " + e.getMessage())
+                    .asRuntimeException());
+        }
     }
 
     @Override
@@ -171,15 +201,21 @@ public class HospitalServiceImpl extends HospitalServiceGrpc.HospitalServiceImpl
     @Override
     @Transactional
     public void readHospitalsOfPatient(PatientId request, StreamObserver<HospitalList> streamObserver) {
-        com.guseinma.hospital.model.Patient patient = patientRepository.findById(request.getId())
-                .orElseThrow(() -> new RuntimeException("Patient does not exist!"));
-        List<Hospital> hospitals = patient.getHospitals().stream()
-                .map(this::hospitalToProto).toList();
-        HospitalList hospitalList = HospitalList.newBuilder()
-                .addAllHospitals(hospitals)
-                .build();
-        streamObserver.onNext(hospitalList);
-        streamObserver.onCompleted();
+        try {
+            com.guseinma.hospital.model.Patient patient = patientRepository.findById(request.getId())
+                    .orElseThrow(() -> new RuntimeException("Patient does not exist!"));
+            List<Hospital> hospitals = patient.getHospitals().stream()
+                    .map(this::hospitalToProto).toList();
+            HospitalList hospitalList = HospitalList.newBuilder()
+                    .addAllHospitals(hospitals)
+                    .build();
+            streamObserver.onNext(hospitalList);
+            streamObserver.onCompleted();
+        } catch (Exception e) {
+            streamObserver.onError(Status.INTERNAL
+                    .withDescription("Error processing readHospitalsOfPatient: " + e.getMessage())
+                    .asRuntimeException());
+        }
     }
 
     private Hospital hospitalToProto(com.guseinma.hospital.model.Hospital hospital) {
