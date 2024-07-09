@@ -45,12 +45,6 @@
 
 > Hospital 1 has been deleted: true<br>
 > List of Hospitals of Patient 1: hospitals {<br>
->   id: 1<br>
->   name: "Grpc Test Hospital 1"<br>
->   address: "789 Grpc St"<br>
->   phoneNumber: "111-222-3333"<br>
-> }<br>
-> hospitals {<br>
 >   id: 2<br>
 >   name: "Grpc Test Hospital 2"<br>
 >   address: "123 Grpc St"<br>
