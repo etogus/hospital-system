@@ -1,6 +1,8 @@
 package com.guseinma.hospital.service;
 
 
+import com.guseinma.hospital.factory.HospitalFactory;
+import com.guseinma.hospital.factory.PatientFactory;
 import com.guseinma.hospital.proto.*;
 import com.guseinma.hospital.repository.HospitalRepository;
 import com.guseinma.hospital.repository.PatientRepository;
@@ -24,10 +26,7 @@ public class HospitalServiceImpl extends HospitalServiceGrpc.HospitalServiceImpl
     @Override
     public void createHospital(Hospital request, StreamObserver<OperationResponse> streamObserver) {
         try {
-            com.guseinma.hospital.model.Hospital hospital = new com.guseinma.hospital.model.Hospital();
-            hospital.setName(request.getName());
-            hospital.setAddress(request.getAddress());
-            hospital.setPhoneNumber(request.getPhoneNumber());
+            com.guseinma.hospital.model.Hospital hospital = HospitalFactory.createFromRequest(request);
             hospitalRepository.save(hospital);
             OperationResponse operationResponse = OperationResponse.newBuilder()
                     .setSuccess(true)
@@ -46,9 +45,7 @@ public class HospitalServiceImpl extends HospitalServiceGrpc.HospitalServiceImpl
         try {
             com.guseinma.hospital.model.Hospital hospital = hospitalRepository.findById(request.getId())
                     .orElseThrow(() -> new RuntimeException("Hospital does not exist!"));
-            hospital.setName(request.getName());
-            hospital.setAddress(request.getAddress());
-            hospital.setPhoneNumber(request.getPhoneNumber());
+            HospitalFactory.updateFromRequest(hospital, request);
             hospitalRepository.save(hospital);
             OperationResponse operationResponse = OperationResponse.newBuilder()
                     .setSuccess(true)
@@ -79,6 +76,7 @@ public class HospitalServiceImpl extends HospitalServiceGrpc.HospitalServiceImpl
                 hospital.getPatients().clear();
                 hospitalRepository.save(hospital);
                 hospitalRepository.delete(hospital);
+                hospitalRepository.flush();
 
                 OperationResponse operationResponse = OperationResponse.newBuilder()
                         .setSuccess(true)
@@ -98,12 +96,7 @@ public class HospitalServiceImpl extends HospitalServiceGrpc.HospitalServiceImpl
     @Override
     public void createPatient(Patient request, StreamObserver<OperationResponse> streamObserver) {
         try {
-            com.guseinma.hospital.model.Patient patient = new com.guseinma.hospital.model.Patient();
-            patient.setFirstName(request.getFirstName());
-            patient.setLastName(request.getLastName());
-            patient.setGender(request.getGender());
-            patient.setBirthDate(LocalDate.parse(request.getBirthDate()));
-            patient.setPhoneNumber(request.getPhoneNumber());
+            com.guseinma.hospital.model.Patient patient = PatientFactory.createFromRequest(request);
             patientRepository.save(patient);
             OperationResponse operationResponse = OperationResponse.newBuilder()
                     .setSuccess(true)
@@ -122,11 +115,7 @@ public class HospitalServiceImpl extends HospitalServiceGrpc.HospitalServiceImpl
         try {
             com.guseinma.hospital.model.Patient patient = patientRepository.findById(request.getId())
                     .orElseThrow(() -> new RuntimeException("Patient does not exist!"));
-            patient.setFirstName(request.getFirstName());
-            patient.setLastName(request.getLastName());
-            patient.setGender(request.getGender());
-            patient.setBirthDate(LocalDate.parse(request.getBirthDate()));
-            patient.setPhoneNumber(request.getPhoneNumber());
+            PatientFactory.updateFromRequest(patient, request);
             patientRepository.save(patient);
             OperationResponse operationResponse = OperationResponse.newBuilder()
                     .setSuccess(true)
