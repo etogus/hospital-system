@@ -1,3 +1,6 @@
+# Hospital system
+This project is a hospital system defined in Grpc using Spring Boot with Hibernate and JPA that makes it possible to enter and store information about patient treatments.
+
 ## Setup
 - Java 21
 - Spring Boot 3.3.1
